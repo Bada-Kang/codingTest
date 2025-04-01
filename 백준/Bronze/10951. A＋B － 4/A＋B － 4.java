@@ -1,0 +1,27 @@
+import java.io.*;
+import java.util.Arrays;
+import java.util.StringTokenizer;
+
+public class Main {
+    public static void main(String[] args) throws IOException {
+        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+
+        while (true) {
+            try {
+                StringTokenizer st = new StringTokenizer(bf.readLine());
+                if (st.toString().isEmpty()) {
+                    break;
+                }
+                int a = Integer.parseInt(st.nextToken());
+                int b = Integer.parseInt(st.nextToken());
+                bw.write((a+b) + "\n");
+                bw.flush();
+            } catch (NullPointerException e) {
+                break;
+            }
+        }
+        bf.close();
+        bw.close();
+    }
+}
