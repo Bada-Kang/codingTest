@@ -1,27 +1,59 @@
 import java.util.*;
-/*일정한 금액 지불시 10일동안 회원 자격 부여
-회원 대상 매일 한가지 제품 할인
-해당 제품은 하루에 한개만 구매 가능
+
+/*
+XYZ 마트는 금액지불 시 10일동안 회원 자격 부여
+회원을 대상으로 매일 한가지 제품을 할인, 하루에 하나만 구매할 수 있음
+
+- 자신이 원하는 제품과 수량이 할인하는 날짜와 10일 연속으로 일치할 경우에만 회원가입
 */
 
 class Solution {
     public int solution(String[] want, int[] number, String[] discount) {
+        
+        //원하는 전체 개수
+        HashMap<String, Integer> map = new HashMap<>();
+        
+        for (int i = 0; i < want.length; i++) {
+            map.put(want[i], number[i]);
+        }
+
+        
+        HashMap<String, Integer> countMap = new HashMap<>();
+        
+        int left = 0;
+        int right = 9;
+        
+        //초기 10일에 대한 계산
+        for (int i = left; i <= right; i++) {
+            int count = countMap.getOrDefault(discount[i], 0);
+            countMap.put(discount[i], count + 1);
+        }
+        
         int answer = 0;
-        //1일부터 5일간 각각 구매 가능한 HashMap 만들기
-        for (int i = 0; i <= discount.length-10; i++) {
-            HashMap<String, Integer> hashMap = new HashMap<>();
-            Boolean status = true;
-            for (int j = 0; j < 10; j++) {
-                hashMap.put(discount[i+j], hashMap.getOrDefault(discount[i+j], 0)+1);    
-            }
-            //System.out.println(hashMap); //예시 출력
-            for (int k = 0; k < want.length; k++) {
-                if (!hashMap.containsKey(want[k]) || hashMap.get(want[k]) < number[k]) {
-                    status = false;
+        while (right < discount.length) {
+            boolean flag = true;
+            
+            //오늘 날짜를 더할지 판단
+            for (String key : map.keySet()) {
+                if (map.get(key) > countMap.getOrDefault(key, 0)) { //사고자 하는게 더 크면
+                    flag = false;
                 }
             }
             
-            if (status) answer++;
+            if (flag) {
+                answer += 1;
+            }
+        
+            
+            //내일로 상태 저장 - left는 1삭제, right는 1추가
+            if (right+1 < discount.length) {
+                String passed = discount[left];
+                String next = discount[right+1];
+                countMap.put(passed, countMap.get(passed) - 1);
+                countMap.put(next, countMap.getOrDefault(next, 0) + 1);
+            }
+            left += 1;
+            right += 1;
         }
         
         return answer;
